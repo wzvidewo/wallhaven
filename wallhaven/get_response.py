@@ -10,6 +10,7 @@ import get_datetime_now
 import write_log
 
 """获取指定url的html代码"""
+path = r'logs\logs.txt'
 
 
 def get_response(url):
@@ -21,13 +22,14 @@ def get_response(url):
         time.sleep(sleep_time)
         print(f'{url}：{response.status_code} 随机等待：{sleep_time} S')
     except HTTPError as e:
-        write_log.write_log(f'{get_datetime_now.get_datetime_now()} {url} HTTP请求错误！{response.status_code} {e}')
+        write_log.write_log(path,
+                            f'{get_datetime_now.get_datetime_now()} {url} HTTP请求错误！{response.status_code} {e}')
     except SSLError as e:
-        write_log.write_log(f'{get_datetime_now.get_datetime_now()} {url} 证书不安全！{e}')
+        write_log.write_log(path, f'{get_datetime_now.get_datetime_now()} {url} 证书不安全！{e}')
     except ProxyError as e:
-        write_log.write_log(f'{get_datetime_now.get_datetime_now()} {url} 代理服务器无法连接或响应超时！{e}')
+        write_log.write_log(path, f'{get_datetime_now.get_datetime_now()} {url} 代理服务器无法连接或响应超时！{e}')
     except ConnectionError as e:
-        write_log.write_log(f'{get_datetime_now.get_datetime_now()} {url} 网络连接失败或超时！{e}')
+        write_log.write_log(path, f'{get_datetime_now.get_datetime_now()} {url} 网络连接失败或超时！{e}')
     except ChunkedEncodingError as e:
-        write_log.write_log(f'{get_datetime_now.get_datetime_now()} {url} 获取数据不完整！{e}')
+        write_log.write_log(path, f'{get_datetime_now.get_datetime_now()} {url} 获取数据不完整！{e}')
     return response

@@ -4,10 +4,10 @@ from subprocess import call
 from bs4 import BeautifulSoup
 
 import get_categorize
-import get_download_path_files
 import get_image_url
 import get_page
 import get_response
+import write_log
 
 # idm程序路径
 idm_path = r'C:\Program Files (x86)\Internet Download Manager\IDMan.exe'
@@ -15,8 +15,13 @@ idm_path = r'C:\Program Files (x86)\Internet Download Manager\IDMan.exe'
 # 图片下载路径
 download_path = r'C:\Documents\Wallhaven'
 
-# 获取下载文件夹里包含的文件列表
-files = get_download_path_files.get_download_path_files(download_path)
+# 已下载图片链接存储文件路径
+urls_path = r'logs\urls.txt'
+
+# 获取 urlpath 文件中的链接去掉换行符存于列表 urls_lists 中
+with open(urls_path, 'r') as f:
+    urls_lists = f.read().split('\n')
+
 categorize = get_categorize.get_categorize()
 pages = get_page.get_page()
 
@@ -28,19 +33,22 @@ for page in range(pages):
         print('请检查网络了连接!')
         exit(0)
     html = BeautifulSoup(response.text, 'lxml')
-    previews = html.find_all('a', class_='preview')
+    # previews = html.find_all('a', class_='preview')
+    previews = html.find_all('a', {'class': 'preview', 'target': '_blank'})
     for preview in previews:
         href = preview.get('href')
+
+        # 判断指向图片真实地址的URL是否在列表 urls_lists 中，是就跳过这次请求
+        if href in urls_lists:
+            print(f'\t{count}：{href}：链接已存在')
+            count += 1
+            continue
+        
+        write_log.write_log(urls_path, href)
         image_url = get_image_url.get_image_url(href)
         # get_image_url会返回None
         if image_url is not None:
             file_name = re.search(r'wallhaven-(.+)(png|jpg)', image_url).group()
-
-            # 判断该文件是否已下载，如果已下载则跳过
-            if file_name in files:
-                print(f'\t{count}：{file_name}：已存在')
-                count += 1
-                continue
             # 把图片链接添加进IDM任务队列，但不开始
             call([idm_path, '/d', image_url, '/p', download_path, '/f', file_name, '/n', '/a'])
             print(f'\t{count}：{file_name}：已添加')

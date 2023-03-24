@@ -3,10 +3,8 @@ import re
 
 """向指定路径的文件写入指定的信息"""
 
-path = r'logs\logs.txt'
 
-
-def write_log(log):
+def write_log(path, log):
     # 使用正则表达式匹配任意字符，直到遇到最后一个斜杠或反斜杠为止。
     filepath = re.search(r'(.+)(/|(\\))', path).group()
 
