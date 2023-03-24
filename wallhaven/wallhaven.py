@@ -23,6 +23,10 @@ pages = get_page.get_page()
 count = 1
 for page in range(pages):
     response = get_response.get_response(f'https://wallhaven.cc/{categorize}?page={page + 1}')
+    # 响应为空则是 get_response 捕获到了异常
+    if response is None:
+        print('请检查网络了连接!')
+        exit(0)
     html = BeautifulSoup(response.text, 'lxml')
     previews = html.find_all('a', class_='preview')
     for preview in previews:
