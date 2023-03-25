@@ -2,6 +2,7 @@ def get_categorize():
     """获取类别"""
     # 主要分类，抓取网站分类功能待实现
     categories = ['latest', 'hot', 'toplist', 'random']
+
     length = len(categories)
     for index in range(length):
         print(f'{index + 1}：{categories[index]}')

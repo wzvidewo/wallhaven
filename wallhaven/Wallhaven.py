@@ -35,10 +35,9 @@ count = 1
 for page in range(pages):
     page_url = f'https://wallhaven.cc/{categorize}?page={page + 1}'
     response = Response.get_response(page_url)
-    # 请求失败给我重新请求
-    if response is None:
+    # 响应为空，则重新请求
+    while response is None:
         response = Response.get_response(page_url)
-
     html = BeautifulSoup(response.text, 'lxml')
     previews = html.find_all('a', {'class': 'preview', 'target': '_blank'})
     for preview in previews:
@@ -56,7 +55,6 @@ for page in range(pages):
         file_name = re.search(r'(\w+\.\w+)$', image_url).group()
         # 把图片链接添加进IDM任务队列，但不开始
         call([idm_path, '/d', image_url, '/p', download_path, '/f', file_name, '/n', '/a'])
-        print(f'\t{count}：{file_name}：已添加')
+        print(f'\t{count}：{file_name}：下载中……')
+        call([idm_path, '/s'])
         count += 1
-print('开始队列')
-call([idm_path, '/s'])

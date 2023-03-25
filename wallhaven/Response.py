@@ -27,9 +27,10 @@ def get_response(url):
         Logs.write_log(logs_path, f'{Datetime.get_datetime_now()} {url} {status_code} {e}')
     except ProxyError as e:
         Logs.write_log(logs_path, f'{Datetime.get_datetime_now()} {url} {status_code} {e}')
+
     if status_code == 200:
         return response
     else:
         Logs.write_log(logs_path, f'{Datetime.get_datetime_now()} {url} {status_code}')
-        print(f'\t请求失败：{url}：{status_code} 准备重新请求')
-        get_response(url)
+        print(f'{url}：{status_code} 请求失败：准备重新请求')
+        return None
