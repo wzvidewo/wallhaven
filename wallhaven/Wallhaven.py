@@ -4,6 +4,7 @@ from subprocess import call
 from bs4 import BeautifulSoup
 
 import Chooses
+import Datetime
 import Files
 import Image
 import Logs
@@ -45,7 +46,7 @@ for page in range(pages):
 
         # 判断指向图片真实地址的URL是否在列表 urls_lists 中，是就跳过这次请求
         if href in urls_lists:
-            print(f'\t{count}：{href}：链接已存在')
+            print(f'\t{count}：{Datetime.get_datetime_now()} {href}：链接已存在')
             count += 1
             continue
 
@@ -55,6 +56,6 @@ for page in range(pages):
         file_name = re.search(r'(\w+\.\w+)$', image_url).group()
         # 把图片链接添加进IDM任务队列，但不开始
         call([idm_path, '/d', image_url, '/p', download_path, '/f', file_name, '/n', '/a'])
-        print(f'\t{count}：{file_name}：下载中……')
+        print(f'\t{count}：{Datetime.get_datetime_now()} {file_name}：下载中……')
         call([idm_path, '/s'])
         count += 1
